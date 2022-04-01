@@ -17,16 +17,17 @@ namespace Lesson_3_DataType
             TestStruct testStruct1 = new TestStruct();
             testStruct1.Age = 30;
 
+            TestStruct testStruct2 = new TestStruct();
+            testStruct2.Age = 100;
+
             //запаковка
             object packed = (object)testStruct1;
 
-            testStruct1.Age = 100;
+            object packedNew = packed;
 
-            TestStruct unpacked = (TestStruct)packed;
+            packedNew = (object)testStruct2;
 
-            unpacked.Age = 200;
-
-            Console.WriteLine(unpacked.Age);
+            Console.WriteLine(((TestStruct)packed).Age);
         }
     }
 
