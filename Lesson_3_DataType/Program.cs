@@ -28,6 +28,7 @@ namespace Lesson_3_DataType
             packedNew = (object)testStruct2;
 
             Console.WriteLine(((TestStruct)packed).Age);
+            Console.WriteLine(((TestStruct)packedNew).Age);
         }
     }
 
