@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReadWriteUserToFile", "Read
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CsharpForBeginners", "CsharpForBeginners", "{C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_1", "Lesson_1\Lesson_1.csproj", "{14AEB396-9D49-4727-9FCF-C4A7349422E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_1", "Lesson_1\Lesson_1.csproj", "{14AEB396-9D49-4727-9FCF-C4A7349422E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_2_CheckBadWords", "Lesson_2_CheckBadWords\Lesson_2_CheckBadWords.csproj", "{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_2_CheckBadWords", "Lesson_2_CheckBadWords\Lesson_2_CheckBadWords.csproj", "{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_3_DataType", "Lesson_3_DataType\Lesson_3_DataType.csproj", "{B3E3227D-26B3-439A-91B8-11A503938065}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E3227D-26B3-439A-91B8-11A503938065}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E3227D-26B3-439A-91B8-11A503938065}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E3227D-26B3-439A-91B8-11A503938065}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E3227D-26B3-439A-91B8-11A503938065}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{14AEB396-9D49-4727-9FCF-C4A7349422E2} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
 		{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
+		{B3E3227D-26B3-439A-91B8-11A503938065} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8338BF00-F9DD-4933-80CB-8F58AC3E6FC9}
