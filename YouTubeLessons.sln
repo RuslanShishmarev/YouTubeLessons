@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_1", "Lesson_1\Lesson
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_2_CheckBadWords", "Lesson_2_CheckBadWords\Lesson_2_CheckBadWords.csproj", "{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_3_DataType", "Lesson_3_DataType\Lesson_3_DataType.csproj", "{B3E3227D-26B3-439A-91B8-11A503938065}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_3_DataType", "Lesson_3_DataType\Lesson_3_DataType.csproj", "{B3E3227D-26B3-439A-91B8-11A503938065}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson_4_Classes", "Lesson_4_Classes\Lesson_4_Classes.csproj", "{7A04DB13-E883-48F8-9241-09A8EF725E9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{B3E3227D-26B3-439A-91B8-11A503938065}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3E3227D-26B3-439A-91B8-11A503938065}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3E3227D-26B3-439A-91B8-11A503938065}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A04DB13-E883-48F8-9241-09A8EF725E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A04DB13-E883-48F8-9241-09A8EF725E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A04DB13-E883-48F8-9241-09A8EF725E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A04DB13-E883-48F8-9241-09A8EF725E9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{14AEB396-9D49-4727-9FCF-C4A7349422E2} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
 		{A06CC1B1-3A7A-4033-8512-BE34DDE8D5DC} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
 		{B3E3227D-26B3-439A-91B8-11A503938065} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
+		{7A04DB13-E883-48F8-9241-09A8EF725E9F} = {C82D9BA4-C4BC-4A9F-86CD-608B4976CA93}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8338BF00-F9DD-4933-80CB-8F58AC3E6FC9}
