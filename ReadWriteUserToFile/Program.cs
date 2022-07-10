@@ -3,23 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace ReadWriteUserToFile
 {
     class Program
     {
-        static string DBFilePath { get; set; }
         static void Main(string[] args)
         {
-            string fileDBName = "users_for_youtube_lessons.txt";
             string fileFolderPath = Path.GetTempPath();
-            DBFilePath = fileFolderPath + fileDBName;
 
-            if(File.Exists(DBFilePath) == false)
-            {
-                var file = File.Create(DBFilePath);
-                file.Close();
-            }
+            MyAppContext myAppContext = new MyAppContext();
+            myAppContext.SetDbPath(Path.Combine(fileFolderPath, "my_test_db/"));
 
             bool isWork = true;
 
@@ -46,7 +41,7 @@ namespace ReadWriteUserToFile
                 {
                     case 0:
                         {
-                            var allUsers = ReadAllFromDB();
+                            var allUsers = myAppContext.Users;
                             if (allUsers.Count == 0) Console.WriteLine("Пока еще нет людей");
                             foreach (var user in allUsers) Console.WriteLine(user);
                             break;
@@ -59,15 +54,19 @@ namespace ReadWriteUserToFile
                             Console.WriteLine("Введите фамилию:");
                             string surname = Console.ReadLine();
 
-                            User newUser = new User(0, name, surname);
-                            SaveToDB(newUser);
+                            User newUser = new User(name, surname);
+                            Worker newWorker = new Worker(name, surname, "программист");
+
+                            myAppContext.Users.Add(newUser);
+                            myAppContext.Workers.Add(newWorker);
+
+                            myAppContext.SaveChanges();
 
                             Console.WriteLine("Успешно");
                             break;
                         }
                     case 2:
                         {
-
                             Console.WriteLine("Введите ID:");
 
                             string idStr = Console.ReadLine();
@@ -76,10 +75,15 @@ namespace ReadWriteUserToFile
                             if (id == 0) Console.WriteLine("Нет такого Id");
                             else
                             {
-                                bool result = DeleteFromDB(id);
+                                try
+                                {
+                                    User userForDeletion = myAppContext.Users.FirstOrDefault(x => x.Id == id);
+                                    myAppContext.Users.Remove(userForDeletion);
+                                    myAppContext.SaveChanges();
 
-                                if (result) Console.WriteLine("Успешно");
-                                else Console.WriteLine("Ошибка");
+                                    Console.WriteLine("Успешно");
+                                }
+                                catch(Exception ex) { Console.WriteLine("Ошибка\n " + ex.Message); }
                             }
                             break;
                         }
@@ -111,78 +115,173 @@ namespace ReadWriteUserToFile
             }
             return input;
         }
-
-        static void SaveToDB(User user)
-        {
-            List<User> allCurrentUsers = ReadAllFromDB();
-
-            int lastId = allCurrentUsers.Count == 0 ? 0 : allCurrentUsers.Last().Id;
-
-            user.SetNewId(lastId + 1);
-
-            allCurrentUsers.Add(user);
-
-            string serializedUsers = JsonConvert.SerializeObject(allCurrentUsers);
-
-            File.WriteAllText(DBFilePath, serializedUsers);
-        }
-
-        static void SaveToDB(List<User> users)
-        {
-            string serializedUsers = JsonConvert.SerializeObject(users);
-
-            File.WriteAllText(DBFilePath, serializedUsers);
-        }
-
-        static bool DeleteFromDB(int id)
-        {
-            List<User> allCurrentUsers = ReadAllFromDB();
-
-            User userForDeletion = allCurrentUsers.FirstOrDefault(u => u.Id == id);
-
-            bool result = false;
-
-            if(userForDeletion != null)
-            {
-                allCurrentUsers.Remove(userForDeletion);
-                SaveToDB(allCurrentUsers);
-                result = true;
-            }
-
-            return result;
-        }
-
-        static List<User> ReadAllFromDB()
-        {
-            string json = File.ReadAllText(DBFilePath);
-
-            List<User> currentUsers = JsonConvert.DeserializeObject<List<User>>(json);
-
-            return currentUsers ?? new List<User>();
-        }
     }
 
-    class User
+    class User : IDbElement
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
 
-        public User(int id, string name, string surname)
+        public User(string name, string surname)
         {
-            Id = id;
             Name = name;
             Surname = surname;
-        }
-
-        public void SetNewId(int id)
-        {
-            Id = id;
         }
 
         public override string ToString()
         {
             return $"{Id} {Name} {Surname}";
+        }
+    }
+
+    class Worker : User
+    {
+        public string JobTitle { get; private set; }
+
+        public Worker(string name, string surname, string jobTitle) : base(name, surname)
+        {
+            JobTitle = jobTitle;
+        }
+    }
+
+    abstract class MyContext
+    {
+        protected string DB_PATH { get; private set; }
+
+        string fileFormat = ".mydb";
+
+        public virtual void SetDbPath(string db_path)
+        {
+            DB_PATH = db_path;
+
+            Directory.CreateDirectory(db_path);
+
+            GetValues();
+        }
+
+        public void SaveChanges()
+        {
+            var allDBsAsProps = GetProperties();
+
+            foreach (var set in allDBsAsProps)
+            {
+                MyDbSet dbSet = set.GetValue(this) as MyDbSet;
+                string serialized = JsonConvert.SerializeObject(dbSet);
+
+                string dbPath = Path.Combine(DB_PATH, set.Name + fileFormat);
+
+                File.WriteAllText(dbPath, serialized);
+
+                dbSet.SaveChanges();
+            }
+        }
+
+        protected IList<PropertyInfo> GetProperties()
+        {
+            return this.GetType().GetProperties().Where(x => x.PropertyType.BaseType.Name == nameof(MyDbSet)).ToList();
+        }
+
+        private void GetValues()
+        {
+            var allDBsAsProps = GetProperties();
+            foreach (var set in allDBsAsProps)
+            {
+                string dbPath = Path.Combine(DB_PATH, set.Name + fileFormat);
+                MyDbSet dbSet = set.GetValue(this) as MyDbSet;
+
+                if (File.Exists(dbPath))
+                {
+                    string serialized = File.ReadAllText(dbPath);
+                    dbSet.Fill(serialized);
+                }
+            }
+        }
+    }
+
+    class MyAppContext : MyContext
+    {
+        public MyDbSet<User> Users { get; set; } = new MyDbSet<User>();
+        public MyDbSet<Worker> Workers { get; set; } = new MyDbSet<Worker>();
+
+        public IEnumerable<string> GetAllProps()
+        {
+            var allDBs = GetProperties();
+            return allDBs.Select(x => x.Name);
+        }
+    }
+
+    interface IDbElement
+    {
+        int Id { get; set; }
+    }
+
+    interface IMyDbSet
+    {
+        void SaveChanges();
+    }
+
+    abstract class MyDbSet : IMyDbSet
+    {
+        public bool IsChanged { get; protected set; }
+
+        public void SaveChanges()
+        {
+            IsChanged = false;
+        }
+
+        public MyDbSet()
+        {
+            IsChanged = false;
+        }
+
+        public abstract void Fill(string data);
+    }
+    class MyDbSet<T>: MyDbSet, IEnumerable<T> where T : IDbElement
+    {
+        private List<T> _innerList = new List<T>();
+
+        public int Count => _innerList.Count;
+
+        public void Add(T item)
+        {
+            item.Id = (_innerList.LastOrDefault()?.Id ?? 0) + 1;
+            _innerList.Add(item);
+
+            IsChanged = true;
+        }
+
+        public void Clear()
+        {
+            _innerList.Clear();
+            IsChanged = true;
+        }
+
+        public bool Contains(T item)
+        {
+            return _innerList.Contains(item);
+        }
+        public bool Remove(T item)
+        {
+            T itemForRemoved = _innerList.FirstOrDefault(x => x.Id == item.Id);
+            IsChanged = true;
+            return _innerList.Remove(itemForRemoved);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _innerList.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public override void Fill(string data)
+        {
+            var deserialized = JsonConvert.DeserializeObject<List<T>>(data);
+            _innerList = deserialized;
         }
     }
 }
