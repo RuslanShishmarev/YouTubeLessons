@@ -5,7 +5,6 @@ using Prism.Mvvm;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -117,11 +116,13 @@ namespace GameSnake.ViewModels
 			int foodRow = rn.Next(rowCount);
             int foodColumn = rn.Next(rowColumn);
 
-			if (_snake.SnakeCells.Any(x => x.Row == foodRow && x.Column == foodColumn))
+			_lastFood = AllCells[foodRow][foodColumn];
+
+			if (_snake.SnakeCells.Contains(_lastFood))
 			{
 				CreateRandomFood();
             }
-			_lastFood = AllCells[foodRow][foodColumn];
+
             _lastFood.CellType = CellType.Food;
 			_speed = (int)(_speed * 0.95);
         }
