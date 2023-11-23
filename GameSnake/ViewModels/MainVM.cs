@@ -40,10 +40,12 @@ namespace GameSnake.ViewModels
 
         private int rowCount = 10;
         private int rowColumn = 10;
-		private int _speed = 500;
+		private const int SPEED_START = 500;
+		private int _speed = 0;
         public MainVM(Window mainWnd)
 		{
-			_mainWnd = mainWnd;
+			_speed = SPEED_START;
+            _mainWnd = mainWnd;
 			StartOrStopCommand = new DelegateCommand(() => ContinueGame = !ContinueGame);			
 
             for (int row = 0; row <= rowCount; row++)
@@ -67,16 +69,20 @@ namespace GameSnake.ViewModels
             switch (e.Key)
 			{
 				case Key.D:
-					_currentDirection = MoveSnakeDirection.Right;
+					if (_currentDirection != MoveSnakeDirection.Left)
+						_currentDirection = MoveSnakeDirection.Right;
 					break;
                 case Key.A:
-                    _currentDirection = MoveSnakeDirection.Left;
+                    if (_currentDirection != MoveSnakeDirection.Right)
+                        _currentDirection = MoveSnakeDirection.Left;
                     break;
                 case Key.W:
-                    _currentDirection = MoveSnakeDirection.Up;
+                    if (_currentDirection != MoveSnakeDirection.Down)
+                        _currentDirection = MoveSnakeDirection.Up;
                     break;
                 case Key.S:
-                    _currentDirection = MoveSnakeDirection.Down;
+                    if (_currentDirection != MoveSnakeDirection.Up)
+                        _currentDirection = MoveSnakeDirection.Down;
                     break;
 
                 default:
@@ -99,6 +105,7 @@ namespace GameSnake.ViewModels
 					_lastFood.CellType = CellType.None;
                     MessageBox.Show("Game over");
                     _snake.Restart();
+					_speed = SPEED_START;
 					CreateRandomFood();
                 }
             }
