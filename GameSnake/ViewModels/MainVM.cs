@@ -28,29 +28,41 @@ namespace GameSnake.ViewModels
 			}
 		}
 
-		public List<List<CellVM>> AllCells { get; } = new List<List<CellVM>>();
+        private double _cellD = 50;
+		public double CellD
+		{
+			get => _cellD;
+			set
+			{
+				_cellD = value;
+				RaisePropertyChanged(nameof(CellD));
+			}
+		}
+
+        public List<List<CellVM>> AllCells { get; } = new List<List<CellVM>>();
 
 		public DelegateCommand StartOrStopCommand { get; }
 
 		private SnakeVM _snake;
 		private CellVM _lastFood;
 		private MoveSnakeDirection _currentDirection = MoveSnakeDirection.Right;
-		private Window _mainWnd;
+		private MainWindow _mainWnd;
 
-        private int rowCount = 10;
-        private int rowColumn = 10;
-		private const int SPEED_START = 500;
+        private const int SPEED_START = 500;
+
+        private int _rowCount = 20;
+        private int _columnCount = 20;
 		private int _speed = 0;
-        public MainVM(Window mainWnd)
+        public MainVM(MainWindow mainWnd)
 		{
 			_speed = SPEED_START;
             _mainWnd = mainWnd;
 			StartOrStopCommand = new DelegateCommand(() => ContinueGame = !ContinueGame);			
 
-            for (int row = 0; row <= rowCount; row++)
+            for (int row = 0; row <= _rowCount; row++)
 			{
 				var rowCells = new List<CellVM>();
-				for (int column = 0; column <= rowColumn; column++)
+				for (int column = 0; column <= _columnCount; column++)
 				{
 					var newCell = new CellVM(row, column, Models.CellType.None);
 					rowCells.Add(newCell);
@@ -58,9 +70,18 @@ namespace GameSnake.ViewModels
 				AllCells.Add(rowCells);
             }
 
-            _snake = new SnakeVM(AllCells[rowCount / 2][rowColumn / 2], AllCells, CreateRandomFood);
+            _snake = new SnakeVM(AllCells[_rowCount / 2][_columnCount / 2], AllCells, CreateRandomFood);
 			CreateRandomFood();
             _mainWnd.KeyDown += KeyClick;
+
+			_mainWnd.Loaded += (s, e) => UpdateCell();
+            _mainWnd.SizeChanged += (s, e) => UpdateCell();
+        }
+
+		private void UpdateCell()
+		{
+            if (_mainWnd.IsLoaded)
+                CellD = (_mainWnd.Width - 150) / _columnCount;
         }
 
         private void KeyClick(object sender, KeyEventArgs e)
@@ -113,8 +134,8 @@ namespace GameSnake.ViewModels
 		private void CreateRandomFood()
 		{
 			var rn = new Random();
-			int foodRow = rn.Next(rowCount);
-            int foodColumn = rn.Next(rowColumn);
+			int foodRow = rn.Next(_rowCount);
+            int foodColumn = rn.Next(_columnCount);
 
 			_lastFood = AllCells[foodRow][foodColumn];
 
