@@ -5,6 +5,7 @@ using Prism.Mvvm;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -131,8 +132,8 @@ namespace GameSnake.ViewModels
             }
 		}
 
-		private void CreateRandomFood()
-		{
+		private void CreateRandomFoodOld()
+		{						
 			var rn = new Random();
 			int foodRow = rn.Next(_rowCount);
             int foodColumn = rn.Next(_columnCount);
@@ -141,11 +142,25 @@ namespace GameSnake.ViewModels
 
 			if (_snake.SnakeCells.Contains(_lastFood))
 			{
-				CreateRandomFood();
+                CreateRandomFoodOld();
             }
 
             _lastFood.CellType = CellType.Food;
 			_speed = (int)(_speed * 0.95);
         }
-	}
+
+        private void CreateRandomFood()
+        {
+			var noneCells = AllCells
+				.SelectMany(x => x.Where(c => c.CellType == CellType.None))
+				.ToArray();
+            var rn = new Random();
+            int randomIndex = rn.Next(noneCells.Count());
+
+            _lastFood = noneCells[randomIndex];
+
+            _lastFood.CellType = CellType.Food;
+            _speed = (int)(_speed * 0.95);
+        }
+    }
 }
