@@ -34,12 +34,11 @@ namespace TicTacToe.ViewModels
 			SetStatusCommand = new DelegateCommand<object>(SetStatus);
         }
 
-
         private void SetStatus(object status)
 		{
-
 			if (this.Status != CellStatus.Empty) 
 				return;
+
 			Status = (CellStatus)status;
 			_updateAppStatus?.Invoke(this);
         }

@@ -41,6 +41,11 @@ namespace TicTacToe.ViewModels
 
         private void CheckGameStatus(CellBtnVM lastClickBtn)
         {
+            if (AllCells.SelectMany(x => x.Where(c => c.Status == CellStatus.Empty)).Count() == 0)
+            {
+                StopGame();
+                return;
+            }
             // column check
             var columnCheck = new List<CellBtnVM>();
             for (int i = 0; i <= _cellRowColumnCount / 2; i++)
@@ -90,7 +95,10 @@ namespace TicTacToe.ViewModels
                 checkByDiagonal = false;
             }
 
-            if (checkByDiagonal && lastClickBtn.Column == 0 && lastClickBtn.Row != _cellRowColumnCount - 1)
+            if (checkByDiagonal && 
+                !(lastClickBtn.Row == 0 && lastClickBtn.Column == _cellRowColumnCount - 1) &&
+                !(lastClickBtn.Row == _cellRowColumnCount - 1 && lastClickBtn.Column == 0)
+                )
             {
                 var crossCheck1 = new List<CellBtnVM>();
                 for (int i = 0; i <= _cellRowColumnCount / 2; i++)
@@ -114,7 +122,7 @@ namespace TicTacToe.ViewModels
                 }
             }
 
-            if (checkByDiagonal && lastClickBtn.Column != 0 && lastClickBtn.Row != 0)
+            if (checkByDiagonal)
             {
                 var crossCheck2 = new List<CellBtnVM>();
                 for (int i = 0; i <= _cellRowColumnCount / 2; i++)
@@ -143,9 +151,19 @@ namespace TicTacToe.ViewModels
             CurrentPlayerStatus = lastClickBtn.Status == CellStatus.Cross ? CellStatus.Circle : CellStatus.Cross;
         }
 
+        private void StopGame()
+        {
+            MessageBox.Show("Without Winner");
+            Reset();
+        }
         private void StopGame(CellStatus winnerStatus)
         {
             MessageBox.Show($"Winner: {winnerStatus}");
+            Reset();
+        }
+
+        private void Reset()
+        {
             foreach (var row in AllCells)
             {
                 foreach (var cell in row)
