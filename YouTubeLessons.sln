@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lessons_9_UnpackString", "L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lesson_10_RoundBrackets", "Lesson_10_RoundBrackets\Lesson_10_RoundBrackets.csproj", "{7F236206-B098-4AE5-8B78-E5DF8AE7B14C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameSnake", "GameSnake\GameSnake.csproj", "{6954B3B6-BC77-4384-BFC4-C4D83830C7EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSnake", "GameSnake\GameSnake.csproj", "{6954B3B6-BC77-4384-BFC4-C4D83830C7EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe", "TicTacToe\TicTacToe.csproj", "{FDFBEBEB-6577-47F0-84B5-5C2AA41CFCE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{6954B3B6-BC77-4384-BFC4-C4D83830C7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6954B3B6-BC77-4384-BFC4-C4D83830C7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6954B3B6-BC77-4384-BFC4-C4D83830C7EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFBEBEB-6577-47F0-84B5-5C2AA41CFCE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFBEBEB-6577-47F0-84B5-5C2AA41CFCE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFBEBEB-6577-47F0-84B5-5C2AA41CFCE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFBEBEB-6577-47F0-84B5-5C2AA41CFCE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
