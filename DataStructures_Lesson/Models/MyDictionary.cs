@@ -153,6 +153,7 @@ public class MyDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>
 
         _elements[bucket.Value] = default;
         _backets[index] = null;
+        _elementCount--;
 
         _freeIndexes.Push(bucket.Value);
     }
