@@ -145,6 +145,8 @@ public class MyDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>
 
     public void Remove(TKey key)
     {
+        if (_elementCount == 0) throw new Exception("Disionary is empty");
+
         (_, int index) = GetHashIndex(key);
 
         int? bucket = _backets[index];
