@@ -1,4 +1,4 @@
-﻿namespace SimpleWebFramework.Main.WebFramework.Models.Attributes;
+﻿namespace SimpleWebFramework.Lib.Models.Attributes;
 
 public abstract class HttpMethodAttribute : Attribute
 {

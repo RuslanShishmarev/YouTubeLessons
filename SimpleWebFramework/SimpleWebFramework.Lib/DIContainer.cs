@@ -1,6 +1,6 @@
-﻿using SimpleWebFramework.Main.WebFramework.Models;
+﻿using SimpleWebFramework.Lib.Models;
 
-namespace SimpleWebFramework.Main.WebFramework;
+namespace SimpleWebFramework.Lib;
 
 internal class DIContainer
 {

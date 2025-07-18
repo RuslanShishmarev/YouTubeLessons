@@ -1,4 +1,4 @@
-﻿namespace SimpleWebFramework.Main.WebFramework.Models;
+﻿namespace SimpleWebFramework.Lib.Models;
 
 public record ActionResult(
     HttpResponseType ResponseType,

@@ -1,9 +1,9 @@
-﻿using SimpleWebFramework.Main.WebFramework.Models.Attributes;
+﻿using SimpleWebFramework.Lib.Models.Attributes;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SimpleWebFramework.Main.WebFramework.Models;
+namespace SimpleWebFramework.Lib.Models;
 
 public class HttpFrameMethod
 {

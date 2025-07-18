@@ -1,4 +1,4 @@
-﻿namespace SimpleWebFramework.Main.WebFramework;
+﻿namespace SimpleWebFramework.Lib;
 
 internal class DIScope
 {

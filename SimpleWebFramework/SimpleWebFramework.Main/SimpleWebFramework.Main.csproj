@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="src\html\Error500.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="src\html\Test\TestData.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -24,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Scriban" Version="6.2.1" />
+    <ProjectReference Include="..\SimpleWebFramework.Lib\SimpleWebFramework.Lib.csproj" />
   </ItemGroup>
 
 </Project>

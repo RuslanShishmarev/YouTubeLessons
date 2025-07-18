@@ -1,16 +1,15 @@
 ﻿using Scriban;
-using SimpleWebFramework.Main.WebFramework.Models;
-using SimpleWebFramework.Main.WebFramework.Models.Attributes;
+using SimpleWebFramework.Lib.Models;
+using SimpleWebFramework.Lib.Models.Attributes;
 
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace SimpleWebFramework.Main.WebFramework;
+namespace SimpleWebFramework.Lib;
 
 public class HttpServerListener
 {
@@ -18,12 +17,15 @@ public class HttpServerListener
     private readonly HttpListener _listener;
     private bool _isRunning;
 
-    private static Assembly _currentAssembly;
-    private readonly string _indexHtml;
-    private readonly string _errorHtml;
+    private Assembly _entryAssembly;
+    private static string _folderOfSRC;
 
-    private const string MAIN_PAGE_RESOURCE_NAME = "MainPage.html";
-    private const string ERROR_RESOURCE_NAME = "Error404.html";
+    private readonly string _indexHtml;
+    private readonly string _error404Html;
+
+    private readonly string _indexPageName = "index.html";
+    private const string ERROR404_RESOURCE_NAME = "Error404.html";
+    private const string ERROR500_RESOURCE_NAME = "Error500.html";
 
     private Dictionary<string, Dictionary<HttpMethodType, HttpFrameMethod>> _endPoints = new();
 
@@ -33,18 +35,20 @@ public class HttpServerListener
 
     private DIContainer _container = new();
 
-    public HttpServerListener(string host)
+    public HttpServerListener(string host, string indexPageName)
     {
         _host = host;
+        _indexPageName = indexPageName;
         _listener = new HttpListener();
         _listener.Prefixes.Add(_host);
 
-        _currentAssembly = Assembly.GetExecutingAssembly();
+        _entryAssembly = Assembly.GetEntryAssembly();
+        _folderOfSRC = Directory.GetParent(_entryAssembly.Location) + "\\src\\html";
 
-        _indexHtml = GetHTMLPage(MAIN_PAGE_RESOURCE_NAME);
-        _errorHtml = GetHTMLPage(ERROR_RESOURCE_NAME);
+        _indexHtml = GetHTMLPage(_indexPageName);
+        _error404Html = GetHTMLPage(ERROR404_RESOURCE_NAME);
 
-        foreach (var commonType in _currentAssembly.GetExportedTypes())
+        foreach (var commonType in _entryAssembly.GetExportedTypes())
         {
             var attributeTop = commonType.GetCustomAttribute<ApiControllerAttribute>();
             if (attributeTop is null) continue;
@@ -89,15 +93,13 @@ public class HttpServerListener
 
     public static string GetHTMLPage(string name)
     {
-        var folderOfSRC = Directory.GetParent(_currentAssembly.Location) + "\\src\\html";
-        var indexHtmlPath = $"{folderOfSRC}\\{name}";
+        var indexHtmlPath = $"{_folderOfSRC}\\{name}";
         return File.ReadAllText(indexHtmlPath);
     }
 
     public static string GetHTMLPage(string name, Dictionary<string, object> context)
     {
-        var folderOfSRC = Directory.GetParent(_currentAssembly.Location) + "\\src\\html";
-        var indexHtmlPath = $"{folderOfSRC}\\{name}";
+        var indexHtmlPath = $"{_folderOfSRC}\\{name}";
         string result = File.ReadAllText(indexHtmlPath);
 
         var template = Template.Parse(result);
@@ -223,22 +225,34 @@ public class HttpServerListener
                     }
                 }
             }
-            var result = func?.Invoke(parameters, body);
 
-            if (result is ActionResult actionResult)
+            try
             {
-                SetResponseType(context.Response, actionResult.ResponseType);
+                var result = func?.Invoke(parameters, body);
 
-                return actionResult.Result?.ToString() ?? string.Empty;
+                if (result is ActionResult actionResult)
+                {
+                    SetResponseType(context.Response, actionResult.ResponseType);
+
+                    return actionResult.Result?.ToString() ?? string.Empty;
+                }
+
+                SetResponseType(context.Response, HttpResponseType.JSON);
+                if (result is string)
+                    return result?.ToString() ?? string.Empty;
+                return JsonSerializer.Serialize(result);
             }
-
-            SetResponseType(context.Response, HttpResponseType.JSON);
-            if (result is string)
-                return result?.ToString() ?? string.Empty;
-            return JsonSerializer.Serialize(result);
+            catch(Exception ex)
+            {
+                context.Response.StatusCode = 500;
+                return GetHTMLPage(ERROR500_RESOURCE_NAME, new Dictionary<string, object>()
+                {
+                    { "error", ex.Message }
+                });
+            }
         }
         context.Response.StatusCode = 404;
-        return _errorHtml;
+        return _error404Html;
     }
 
     private HttpFrameMethod GetFuncFromRequest(string route, string method)

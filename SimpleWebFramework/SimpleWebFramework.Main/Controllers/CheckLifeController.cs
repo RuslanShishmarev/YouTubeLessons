@@ -1,6 +1,6 @@
 ﻿using SimpleWebFramework.Main.Models;
 using SimpleWebFramework.Main.Services.Interfaces;
-using SimpleWebFramework.Main.WebFramework.Models.Attributes;
+using SimpleWebFramework.Lib.Models.Attributes;
 
 namespace SimpleWebFramework.Main.Controllers;
 
