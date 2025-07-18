@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace SimpleWebFramework.Main.WebFramework;
@@ -30,6 +31,8 @@ public class HttpServerListener
 
     private Dictionary<string, HttpFrameMethod> _endPointsWithPatternCache = new();
 
+    private DIContainer _container = new();
+
     public HttpServerListener(string host)
     {
         _host = host;
@@ -48,8 +51,6 @@ public class HttpServerListener
 
             MethodInfo[] allPoints = commonType.GetMethods();
 
-            var controllerContext = Activator.CreateInstance(commonType)!;
-
             foreach (MethodInfo point in allPoints)
             {
                 var methodAttribure = point.GetCustomAttribute<HttpMethodAttribute>();
@@ -59,7 +60,7 @@ public class HttpServerListener
                     controllerRoute: attributeTop.Route,
                     point: point,
                     methodAttribure: methodAttribure,
-                    controllerContext: controllerContext);
+                    controllerType: commonType);
 
                 if (httpMethod.WithPattern)
                 {
@@ -137,11 +138,13 @@ public class HttpServerListener
         _listener.Close();
     }
 
+    public void Add<TIn, TOut>(LifeTime life) => _container.Add<TIn, TOut>(life);
+
     private HttpFrameMethod GetHttpMethod(
         string controllerRoute,
         MethodInfo point,
         HttpMethodAttribute methodAttribure,
-        object controllerContext)
+        Type controllerType)
     {
         string route = $"/{controllerRoute}" +
             (string.IsNullOrEmpty(methodAttribure.Route) ? string.Empty : $"/{methodAttribure.Route}");
@@ -152,6 +155,8 @@ public class HttpServerListener
             methodType: methodAttribure.MethodType,
             func: (args) =>
             {
+                var scope = new DIScope();
+                var controllerContext = _container.CreateInstance(controllerType, scope);
                 var result = point.Invoke(controllerContext, args);
                 return result;
             },
@@ -223,11 +228,14 @@ public class HttpServerListener
             if (result is ActionResult actionResult)
             {
                 SetResponseType(context.Response, actionResult.ResponseType);
+
                 return actionResult.Result?.ToString() ?? string.Empty;
             }
 
             SetResponseType(context.Response, HttpResponseType.JSON);
-            return result?.ToString() ?? string.Empty;
+            if (result is string)
+                return result?.ToString() ?? string.Empty;
+            return JsonSerializer.Serialize(result);
         }
         context.Response.StatusCode = 404;
         return _errorHtml;
